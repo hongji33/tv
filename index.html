@@ -211,7 +211,12 @@ label{display:block;font-weight:800;font-size:15px}
 .lbl .nm:empty{display:none}
 .lbl .num{min-width:2.2em;justify-content:center}
 .tile.dupe .lbl .nm{background:var(--coral)}
-.num-in{display:block;max-width:160px;font-size:24px;text-align:center}
+.lbl{cursor:pointer}
+.lbl:hover .num{background:var(--pass)}
+.tile.nonum .lbl .num{background:var(--pass)}
+.tile.nonum .lbl .nm{background:var(--ink2)}
+.dlg-bg.dark{background:rgba(3,14,26,.7)}
+.num-big{margin:22px auto 16px;display:block;max-width:180px;text-align:center;font-family:var(--display);font-size:56px;font-weight:400;padding:10px}
 .blurred .tile video,.blurred #spotVideo{filter:blur(18px) saturate(.6)}
 #empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:24px}
 .hint{position:fixed;right:16px;bottom:12px;font-size:13px;color:#7F9BB5;pointer-events:none;display:flex;gap:14px}
@@ -361,7 +366,7 @@ label{display:block;font-weight:800;font-size:15px}
     <div id="grid"></div>
     <div id="empty"><div class="guide" id="emptyGuide"></div></div>
   </main>
-  <div class="hint"><span><kbd>클릭</kbd>고르기</span><span><kbd>더블클릭</kbd>크게 보기</span><span><kbd>Esc</kbd>돌아가기</span></div>
+  <div class="hint"><span><kbd>번호 누르기</kbd>번호 정하기</span><span><kbd>클릭</kbd>고르기</span><span><kbd>더블클릭</kbd>크게 보기</span><span><kbd>Esc</kbd>돌아가기</span></div>
 </section>
 
 <div id="spot" class="overlay" hidden>
@@ -375,6 +380,16 @@ label{display:block;font-weight:800;font-size:15px}
     </div>
   </div>
   <video id="spotVideo" autoplay muted playsinline></video>
+</div>
+
+<div class="dlg-bg dark" id="numDlg" hidden>
+  <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="numDlgT">
+    <p class="dlg-k">크롬북 번호 정하기</p>
+    <h3 class="title" id="numDlgT">몇 번 크롬북인가요?</h3>
+    <input id="numIn" class="field num-big" inputmode="numeric" maxlength="2" autocomplete="off" aria-label="번호">
+    <p class="dlg-help">정한 번호는 그 크롬북에 저장돼서, 다음 수업부터는 자동으로 이 번호로 떠요.</p>
+    <div class="dlg-btns"><button class="btn btn-line" id="numCancel">취소</button><button class="btn btn-pass" id="numOk">정하기</button></div>
+  </div>
 </div>
 
 <div id="guideOv" class="overlay" hidden>
@@ -391,11 +406,8 @@ label{display:block;font-weight:800;font-size:15px}
     <div class="slots" id="digits">
       <input inputmode="numeric" maxlength="1" placeholder=" " aria-label="첫째 숫자"><input inputmode="numeric" maxlength="1" placeholder=" " aria-label="둘째 숫자"><input inputmode="numeric" maxlength="1" placeholder=" " aria-label="셋째 숫자"><input inputmode="numeric" maxlength="1" placeholder=" " aria-label="넷째 숫자">
     </div>
-    <div class="me" id="sMe" hidden><span class="me-k">이 크롬북</span><b id="sMeText"></b><button class="me-edit" id="sMeEdit">바꾸기</button></div>
-    <div id="sIdent">
-      <label>내 번호<input id="sNum" class="field num-in" inputmode="numeric" maxlength="2" placeholder="12"></label>
-      <p class="ident-help">이름은 넣지 않아요. 번호는 처음 한 번만 넣으면 이 크롬북에 저장돼요.</p>
-    </div>
+    <div class="me" id="sMe" hidden><span class="me-k">이 크롬북</span><b id="sMeText"></b></div>
+    <p class="ident-help" id="sIdent">번호는 선생님이 정해 줘요. 숫자 4개만 넣고 들어가요.</p>
     <button id="sJoin" class="btn btn-pass wide">들어가기</button>
     <p id="sJoinMsg" class="msg"></p>
   </div>
@@ -649,8 +661,8 @@ function rec(id){
     <div class="lbl"><span class="dot"></span><span class="num"></span><span class="nm">연결 중…</span><span class="badge" hidden>탭만</span></div>
     <div class="chk">✓</div><button class="rm" title="목록에서 지우기">×</button><div class="frz" hidden></div>`;
   r.el = el; r.video = el.querySelector('video');
-  el.addEventListener('click', e => { if (e.target.closest('.rm')) { removeRec(r); refresh(); return; } r.selected = !r.selected; updateTile(r); refresh(); });
-  el.addEventListener('dblclick', () => openSpot(r));
+  el.addEventListener('click', e => { if (e.target.closest('.rm')) { removeRec(r); refresh(); return; } if (e.target.closest('.lbl')) { openNumDlg(r); return; } r.selected = !r.selected; updateTile(r); refresh(); });
+  el.addEventListener('dblclick', e => { if (!e.target.closest('.lbl')) openSpot(r); });
   T.students.set(id, r);
   $('#grid').appendChild(el);
   return r;
@@ -670,9 +682,14 @@ function onStudentData(id, d){
   r.lastSeen = Date.now();
   if (!r.online) { r.online = true; updateTile(r); refresh(); }
   if (d.type === 'hello') {
-    r.num = String(d.num ?? '').replace(/\D/g,'').slice(0,2);
-    r.name = '';
-    r.key = String(d.dev || ('num-' + r.num));
+    r.dev = String(d.dev || '');
+    r.key = r.dev || ('peer-' + id);
+    r.hello = true; r.name = '';
+    // 선생님 컴퓨터에 저장된 번호가 있으면 그것이 우선 (학생이 번호를 바꿀 수 없게)
+    const known = r.dev ? store.get('sw-devnum', {})[r.dev] : '';
+    const claimed = String(d.num ?? '').replace(/\D/g,'').slice(0,2);
+    r.num = known || claimed;
+    if (known && known !== claimed) sendNum(r);
     // 같은 크롬북이 다시 들어오면 예전 칸을 정리 (다른 크롬북이 같은 번호를 넣으면 둘 다 보이고 '번호 겹침' 표시)
     for (const o of [...T.students.values()]) {
       if (o !== r && o.key === r.key) { if (o.selected) r.selected = true; const wasSpot = T.spotId === o.id; removeRec(o); if (wasSpot) openSpot(r); }
@@ -683,12 +700,36 @@ function onStudentData(id, d){
   else if (d.type === 'stopped') { stopTileStream(r); }
 }
 
+// ---- 크롬북 번호 정하기 (선생님만) ----
+let numTarget = null;
+function sendNum(r){ try { r.conn && r.conn.open && r.conn.send({ type:'setnum', num:r.num }); } catch {} }
+function openNumDlg(r){
+  if (!r.hello) return;
+  numTarget = r;
+  $('#numIn').value = r.num || '';
+  $('#numDlg').hidden = false; $('#numIn').focus(); $('#numIn').select();
+}
+function closeNumDlg(){ $('#numDlg').hidden = true; numTarget = null; }
+$('#numIn').addEventListener('input', e => e.target.value = e.target.value.replace(/\D/g,'').slice(0,2));
+$('#numIn').addEventListener('keydown', e => { if (e.key === 'Enter') $('#numOk').click(); if (e.key === 'Escape') closeNumDlg(); });
+$('#numCancel').onclick = closeNumDlg;
+$('#numDlg').addEventListener('click', e => { if (e.target.id === 'numDlg') closeNumDlg(); });
+$('#numOk').onclick = () => {
+  const r = numTarget; const n = String(+$('#numIn').value || '');
+  if (!r || !n || +n < 1) { $('#numIn').focus(); return; }
+  r.num = n;
+  if (r.dev) { const m = store.get('sw-devnum', {}); m[r.dev] = n; store.set('sw-devnum', m); }
+  sendNum(r); closeNumDlg(); updateTile(r); refresh();
+  if (T.spotId === r.id) openSpot(r);
+};
+
 function updateTile(r){
   const st = !r.online ? 'off' : r.sharing ? 'live' : 'wait';
   r.el.dataset.st = st;
   r.el.classList.toggle('sel', r.selected);
-  r.el.querySelector('.num').textContent = r.num || '';
-  r.el.querySelector('.nm').textContent = r.num ? (r.dupe ? '번호 겹침' : '') : '연결 중…';
+  r.el.querySelector('.num').textContent = r.num || '?';
+  r.el.querySelector('.nm').textContent = !r.hello ? '연결 중…' : !r.num ? '번호 정하기' : r.dupe ? '번호 겹침' : '';
+  r.el.classList.toggle('nonum', !!r.hello && !r.num);
   r.el.classList.toggle('dupe', !!r.dupe);
   const badge = r.el.querySelector('.badge');
   badge.hidden = !(st === 'live' && r.surface && r.surface !== 'monitor');
@@ -804,7 +845,7 @@ $('#spotClose').onclick = closeSpot;
 $('#spotPrev').onclick = () => stepSpot(-1);
 $('#spotNext').onclick = () => stepSpot(1);
 document.addEventListener('keydown', e => {
-  if (!T.open || document.activeElement?.tagName === 'INPUT') return;
+  if (!T.open || document.activeElement?.tagName === 'INPUT' || !$('#numDlg').hidden) return;
   if (e.key === 'Escape') { if (!$('#spot').hidden) closeSpot(); else if (!$('#guideOv').hidden) $('#guideOv').hidden = true; else if (T.view === 'selected') setView('all'); }
   if (!$('#spot').hidden && e.key === 'ArrowRight') stepSpot(1);
   if (!$('#spot').hidden && e.key === 'ArrowLeft') stepSpot(-1);
@@ -868,15 +909,13 @@ setInterval(() => {
 const S = { peer:null, conn:null, call:null, stream:null, code:'', num:'', name:'', level:'low', everJoined:false, pending:false, leaving:false, retryT:null };
 const D = [...document.querySelectorAll('#digits input')];
 D.forEach((inp, i) => {
-  inp.addEventListener('input', () => { inp.value = inp.value.replace(/\D/g,'').slice(-1); if (inp.value && i < 3) D[i+1].focus(); else if (inp.value && i === 3) $('#sNum').focus(); });
+  inp.addEventListener('input', () => { inp.value = inp.value.replace(/\D/g,'').slice(-1); if (inp.value && i < 3) D[i+1].focus(); else if (inp.value && i === 3) $('#sJoin').focus(); });
   inp.addEventListener('keydown', e => { if (e.key === 'Backspace' && !inp.value && i > 0) D[i-1].focus(); if (e.key === 'Enter') $('#sJoin').click(); });
   inp.addEventListener('paste', e => {
     const t = (e.clipboardData.getData('text') || '').replace(/\D/g,'').slice(0,4);
     if (!t) return; e.preventDefault(); t.split('').forEach((c, j) => D[j] && (D[j].value = c)); D[Math.min(t.length, 3)].focus();
   });
 });
-$('#sNum').addEventListener('input', e => e.target.value = e.target.value.replace(/\D/g,'').slice(0,2));
-$('#sNum').addEventListener('keydown', e => { if (e.key === 'Enter') $('#sJoin').click(); });
 // 크롬북마다 한 번 만들어 저장하는 보이지 않는 표시 (같은 크롬북이 다시 들어올 때 알아보는 용도, 개인정보 아님)
 function deviceId(){ let id = store.get('sw-device', ''); if (!id) { id = Math.random().toString(36).slice(2, 10) + Date.now().toString(36); store.set('sw-device', id); } return id; }
 
@@ -884,16 +923,14 @@ function showIdentity(){
   const saved = store.get('sw-student', null);
   const has = saved && saved.num;
   $('#sMe').hidden = !has; $('#sIdent').hidden = !!has;
-  if (has) { $('#sNum').value = saved.num; $('#sMeText').textContent = `${saved.num}번`; }
+  if (has) $('#sMeText').textContent = `${saved.num}번`;
 }
-$('#sMeEdit').onclick = () => { $('#sMe').hidden = true; $('#sIdent').hidden = false; $('#sNum').focus(); };
 $('#sJoin').onclick = () => {
   const code = D.map(d => d.value).join('');
-  const num = String(+$('#sNum').value.trim() || ''), name = '';
+  const saved = store.get('sw-student', null);
+  const num = (saved && saved.num) ? String(saved.num) : '', name = '';
   if (!/^\d{4}$/.test(code)) return setMsg('#sJoinMsg', '숫자 4개를 모두 넣어 주세요.', 'bad');
-  if (!num) return setMsg('#sJoinMsg', '번호를 넣어 주세요.', 'bad');
   if (!window.Peer) return setMsg('#sJoinMsg', '연결 도구를 불러오지 못했어요. 새로고침해 주세요.', 'bad');
-  store.set('sw-student', { num }); showIdentity();
   Object.assign(S, { code, num, name, leaving:false, everJoined:false });
   $('#sJoin').disabled = true;
   setMsg('#sJoinMsg', '선생님 수업을 찾는 중…');
@@ -956,6 +993,11 @@ function onTeacherData(d){
   if (!d || typeof d !== 'object') return;
   if (d.type === 'quality') { S.level = d.level === 'high' ? 'high' : 'low'; applyLevel(); }
   if (d.type === 'end') endByTeacher();
+  if (d.type === 'setnum') {
+    S.num = String(d.num || '').replace(/\D/g,'').slice(0,2);
+    store.set('sw-student', { num:S.num }); showIdentity();
+    $('#sWho').innerHTML = whoHTML(); toast(`선생님이 이 크롬북을 ${S.num}번으로 정했어요`);
+  }
   if (d.type === 'room') { S.room = String(d.name || '').slice(0, 20); $('#sWho').innerHTML = whoHTML(); }
 }
 
@@ -1048,7 +1090,7 @@ function endByTeacher(){
   go('studentLive');
   setLive('ended');
 }
-function whoHTML(){ return `${S.room ? esc(S.room) + ' ' : ''}<b>${esc(S.num)}번</b>`; }
+function whoHTML(){ return `${S.room ? esc(S.room) + ' ' : ''}<b>${S.num ? esc(S.num) + '번' : '번호는 선생님이 정해요'}</b>`; }
 function setLive(state){
   const card = $('#liveCard');
   card.className = 'card live st-' + state;
