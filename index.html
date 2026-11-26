@@ -122,6 +122,32 @@ label{display:block;font-weight:800;font-size:15px}
 .room.special .plate{font-size:26px;line-height:1.2;min-height:53px;display:flex;align-items:flex-end}
 .room .sub{display:block;margin-top:8px;padding-right:56px;font-size:14px;font-weight:700;color:var(--mist)}
 .room .tag{position:absolute;bottom:14px;right:14px;background:var(--pass);border-radius:6px;padding:3px 7px;font-weight:800;font-size:13px;letter-spacing:.06em}
+.join-brand{margin-bottom:18px;font-size:15px}
+.join-brand .mark{width:36px;height:28px;gap:3px}
+.me{display:flex;align-items:center;gap:10px;background:var(--foam);border-radius:14px;padding:14px 16px}
+.me-k{font-size:14px;font-weight:700;color:var(--mist)}
+.me b{font-size:19px;flex:1}
+.me-edit{font-weight:700;color:var(--mist);text-decoration:underline;font-size:14px}
+.ident-help{margin-top:10px;font-size:14px;color:var(--mist)}
+.pin{max-width:460px}
+.pin-in{margin-top:22px;text-align:center;font-size:28px;letter-spacing:.4em}
+.add-room{margin-top:20px;width:100%;padding:16px;border:2px dashed var(--line);border-radius:18px;font-weight:800;color:var(--mist);font-size:16px}
+.add-room:hover{border-color:var(--ink);color:var(--ink)}
+.dlg-bg{position:fixed;inset:0;z-index:30;background:rgba(14,42,71,.45);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:20px}
+.dlg{background:var(--paper);border-radius:26px;padding:34px 34px 22px;width:100%;max-width:460px;text-align:center;box-shadow:0 40px 80px -30px rgba(6,25,43,.6);animation:pop .18s ease-out}
+@keyframes pop{from{transform:scale(.96);opacity:0}to{transform:none;opacity:1}}
+.dlg-k{font-weight:800;color:var(--mist);font-size:15px;margin-bottom:6px}
+.dlg label{text-align:left;margin-top:16px}
+.dlg-ticket{margin:22px auto 14px;height:96px;--notch:14px}
+.dlg-ticket .stub{font-size:14px}
+.code-in{width:4.3em;background:transparent;border:none;outline:none;font-family:var(--display);font-size:58px;letter-spacing:.08em;color:var(--ink);padding:6px 14px 0 18px;text-align:center}
+.code-in::selection{background:var(--ink);color:var(--pass)}
+.dlg-ticket:focus-within{box-shadow:inset 0 0 0 3px var(--ink)}
+.dlg-help{color:var(--mist);font-size:15px;line-height:1.6;max-width:30em;margin:0 auto}
+.dlg-btns{display:flex;gap:10px;margin-top:22px}
+.dlg-btns .btn{flex:1}
+.dlg .msg{margin-top:12px;min-height:0}
+.dlg .link{margin-top:8px}
 .custom{display:flex;gap:12px;align-items:flex-end;margin-top:30px;padding-top:24px;border-top:2px dashed var(--line)}
 .custom label{flex:1;color:var(--mist)}
 .custom .field{letter-spacing:.3em;font-family:var(--display);font-weight:400;font-size:24px;color:var(--ink)}
@@ -182,7 +208,10 @@ label{display:block;font-weight:800;font-size:15px}
 .tile.sel .chk{display:grid}
 .rm{position:absolute;top:8px;left:8px;width:30px;height:30px;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;display:none;place-items:center;font-size:18px}
 .tile[data-st="off"] .rm{display:grid}
-.names-hidden .lbl .nm,.names-hidden .ov-name .nm{display:none}
+.lbl .nm:empty{display:none}
+.lbl .num{min-width:2.2em;justify-content:center}
+.tile.dupe .lbl .nm{background:var(--coral)}
+.num-in{display:block;max-width:160px;font-size:24px;text-align:center}
 .blurred .tile video,.blurred #spotVideo{filter:blur(18px) saturate(.6)}
 #empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:24px}
 .hint{position:fixed;right:16px;bottom:12px;font-size:13px;color:#7F9BB5;pointer-events:none;display:flex;gap:14px}
@@ -232,7 +261,7 @@ label{display:block;font-weight:800;font-size:15px}
 .steps li::before{content:counter(s);display:grid;place-items:center;width:28px;height:28px;flex:none;border-radius:50%;background:var(--ink);color:#fff;font-family:var(--display);font-size:15px}
 .watching{margin-top:20px;padding:14px 16px;border-radius:14px;background:var(--pass);font-weight:800;display:flex;align-items:center;justify-content:center;gap:10px}
 .warn-box{margin-top:18px;padding:14px;border-radius:14px;background:#FFF1F1;border:2px solid #F7B4B7;color:#9B1C23;font-weight:700;font-size:15px;line-height:1.5}
-.who{display:inline-flex;align-items:center;gap:8px;margin-top:22px;font-weight:700;color:var(--mist)}
+.who{display:flex;justify-content:center;align-items:center;gap:8px;margin-top:22px;font-weight:700;color:var(--mist)}
 .who b{color:var(--ink)}
 .link{display:block;margin:12px auto 0;color:var(--mist);text-decoration:underline;font-size:15px;font-weight:600}
 
@@ -275,21 +304,39 @@ label{display:block;font-weight:800;font-size:15px}
   </div>
 </section>
 
+<!-- ===================== 선생님: 비밀번호 ===================== -->
+<section id="teacherPin" class="screen center light">
+  <div class="sheet pin">
+    <div class="home-top"><div class="mark" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>우리반 화면 모아보기</div>
+    <h2 class="title" style="margin-top:18px">선생님 확인</h2>
+    <p class="lead">선생님 비밀번호를 넣어 주세요. 이 컴퓨터에서는 한 번만 넣으면 돼요.</p>
+    <input id="pinIn" class="field pin-in" type="password" inputmode="numeric" autocomplete="off" aria-label="선생님 비밀번호">
+    <button id="pinGo" class="btn btn-pass wide">확인</button>
+    <p id="pinMsg" class="msg"></p>
+  </div>
+</section>
+
 <!-- ===================== 선생님: 교실 고르기 ===================== -->
 <section id="teacherSetup" class="screen center light">
   <div class="sheet setup">
-    <button class="back" data-go="home">← 처음으로</button>
+    <button class="back" id="tLock">🔒 이 컴퓨터 잠그기</button>
     <h2 class="title">어느 교실에서 수업하세요?</h2>
-    <p class="lead">교실을 누르면 바로 수업이 열려요. 학생은 노란 숫자 4개로 들어와요.</p>
+    <p class="lead">교실을 누르면 그 교실의 입장 숫자를 정하고 수업을 열어요.</p>
     <div class="tabs" id="gradeTabs"></div>
     <div class="rooms" id="rooms"></div>
-    <div class="custom">
-      <label>목록에 없는 교실은 숫자 4개를 직접 넣어요
-        <input id="tCode" class="field" inputmode="numeric" maxlength="4" placeholder="0000">
-      </label>
-      <button id="tStart" class="btn btn-pass">수업 열기</button>
+    <button class="add-room" id="tOther">＋ 목록에 없는 곳에서 수업하기</button>
+  </div>
+  <div class="dlg-bg" id="codeDlg" hidden>
+    <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="dlgRoom">
+      <p class="dlg-k">입장 숫자 정하기</p>
+      <h3 class="title" id="dlgRoom"></h3>
+      <label id="dlgNameWrap" hidden>수업 장소 이름<input id="dlgName" class="field" maxlength="12" placeholder="예: 운동장"></label>
+      <div class="ticket dlg-ticket"><span class="stub">입장<br>숫자</span><input id="tCode" class="code-in" inputmode="numeric" maxlength="4" aria-label="입장 숫자 4개" autocomplete="off"></div>
+      <p class="dlg-help">학생들은 수업이 열리면 TV에 뜨는 이 숫자로 들어와요. 원하는 숫자로 고쳐도 돼요. 이 컴퓨터에 저장돼서 다음 수업에도 같은 숫자가 나와요.</p>
+      <div class="dlg-btns"><button class="btn btn-line" id="dlgNew">다른 숫자 만들기</button><button class="btn btn-pass" id="tStart">수업 열기</button></div>
+      <p id="tSetupMsg" class="msg"></p>
+      <button class="link" id="dlgCancel">취소</button>
     </div>
-    <p id="tSetupMsg" class="msg"></p>
   </div>
 </section>
 
@@ -304,7 +351,6 @@ label{display:block;font-weight:800;font-size:15px}
     <div class="bar-r">
       <div class="seg" id="viewSeg"><button data-view="all" class="on">전체</button><button data-view="selected">고른 학생만<em id="selCount">0</em></button></div>
       <button class="tool" id="bClearSel">선택 풀기</button>
-      <button class="tool toggle" id="bHideNames">이름 가리기</button>
       <button class="tool toggle" id="bBlur">흐리게</button>
       <button class="tool" id="bGuide">접속 안내</button>
       <button class="tool" id="bFull" title="전체 화면" aria-label="전체 화면">⛶</button>
@@ -339,15 +385,16 @@ label{display:block;font-weight:800;font-size:15px}
 <!-- ===================== 학생: 들어가기 ===================== -->
 <section id="studentJoin" class="screen center light">
   <div class="sheet join">
-    <button class="back" data-go="home">← 처음으로</button>
+    <div class="home-top join-brand"><div class="mark" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>우리반 화면 모아보기</div>
     <h2 class="title">수업에 들어가요</h2>
     <p class="lead">선생님 TV에 보이는 노란 숫자 4개를 넣어요.</p>
     <div class="slots" id="digits">
       <input inputmode="numeric" maxlength="1" placeholder=" " aria-label="첫째 숫자"><input inputmode="numeric" maxlength="1" placeholder=" " aria-label="둘째 숫자"><input inputmode="numeric" maxlength="1" placeholder=" " aria-label="셋째 숫자"><input inputmode="numeric" maxlength="1" placeholder=" " aria-label="넷째 숫자">
     </div>
-    <div class="row2">
-      <label>번호<input id="sNum" class="field" inputmode="numeric" maxlength="2" placeholder="12"></label>
-      <label>이름<input id="sName" class="field" maxlength="10" placeholder="홍길동"></label>
+    <div class="me" id="sMe" hidden><span class="me-k">이 크롬북</span><b id="sMeText"></b><button class="me-edit" id="sMeEdit">바꾸기</button></div>
+    <div id="sIdent">
+      <label>내 번호<input id="sNum" class="field num-in" inputmode="numeric" maxlength="2" placeholder="12"></label>
+      <p class="ident-help">이름은 넣지 않아요. 번호는 처음 한 번만 넣으면 이 크롬북에 저장돼요.</p>
     </div>
     <button id="sJoin" class="btn btn-pass wide">들어가기</button>
     <p id="sJoinMsg" class="msg"></p>
@@ -375,8 +422,7 @@ label{display:block;font-weight:800;font-size:15px}
 /* =========================================================
    ✏️ 학교 설정 — 여기만 고치면 돼요
    - 학년별 반 수를 바꾸면 교실 목록이 자동으로 바뀌어요.
-   - 반 코드 규칙: 학년 2자리 + 반 2자리 (3학년 1반 → 0301)
-   - 특별실은 04로 시작하는 코드로 원하는 만큼 추가하세요.
+   - 특별실은 이름만 넣으면 돼요. 입장 숫자는 선생님마다 정해요.
    ========================================================= */
 const SCHOOL = {
   classesPerGrade: { 1: 10, 2: 10, 3: 10 },
@@ -386,29 +432,34 @@ const SCHOOL = {
   // 크롬북 시계는 1분마다 바뀌어서, 60초보다 짧으면 가만히 글 읽는 학생도 표시될 수 있어요
   // (멈춘 사진만 확실히 잡으려면 70으로 바꾸세요)
   freezeSeconds: 30,
+  // 선생님 비밀번호 (직접 적지 않고 암호처럼 바꾼 값만 넣어요. 바꾸고 싶으면 Claude에게 새 비밀번호를 알려 주세요)
+  teacherPinHash: 'f5f9b934746d647fbdc2dc65e8a5f3897bf9bae0d16332539431b63451d0025f',
+  // 학교 와이파이에서 학생과 선생님 기기가 직접 연결되지 않을 때 쓰는 중계(TURN) 서버. 필요할 때만 넣어요.
+  turnServers: [],
   specialRooms: [
-    { name: '통합교육반', code: '0401' },
-    { name: '도서관', code: '0402' },
-    { name: '진로실', code: '0403' },
-    { name: '기술실', code: '0404' },
-    { name: '미술실 1층', code: '0405' },
-    { name: '미술실 2층', code: '0406' },
-    { name: '가사실', code: '0407' },
-    { name: '과학1실', code: '0408' },
-    { name: '과학2실', code: '0409' },
-    { name: '과학3실', code: '0410' },
-    { name: '컴퓨터실', code: '0411' },
-    { name: '강당', code: '0412' },
-    { name: '상상나래실', code: '0413' },
-    { name: 'DS1실', code: '0414' },
-    { name: 'DS3실', code: '0415' },
-    { name: '시청각실', code: '0416' },
+    { name: '통합교육반' },
+    { name: '도서관' },
+    { name: '진로실' },
+    { name: '기술실' },
+    { name: '미술실 1층' },
+    { name: '미술실 2층' },
+    { name: '가사실' },
+    { name: '과학1실' },
+    { name: '과학2실' },
+    { name: '과학3실' },
+    { name: '컴퓨터실' },
+    { name: '강당' },
+    { name: '상상나래실' },
+    { name: 'DS1실' },
+    { name: 'DS3실' },
+    { name: '시청각실' },
   ],
 };
 // 다른 학교와 겹치지 않게 붙이는 고유 이름표 (바꾸지 않아도 돼요)
 const PREFIX = 'oceanms-screenwall-v1-';
 // (시험용) 다른 연결 서버를 쓸 때만 window.SW_PEER_OPTS로 바꿔요
-const PEER_OPTS = window.SW_PEER_OPTS || {};
+const PEER_OPTS = window.SW_PEER_OPTS || (SCHOOL.turnServers.length
+  ? { config:{ iceServers:[{ urls:'stun:stun.l.google.com:19302' }, ...SCHOOL.turnServers] } } : {});
 
 /* ---------- 도우미 ---------- */
 const $ = s => document.querySelector(s);
@@ -423,18 +474,47 @@ function setMsg(sel, text, kind=''){ const el = $(sel); el.textContent = text; e
 let toastT;
 function toast(t){ const el = $('#toast'); el.textContent = t; el.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove('show'), 2600); }
 function baseUrl(){ return location.origin === 'null' ? location.href.split('?')[0] : location.origin + location.pathname; }
-function roomName(code){
-  const sp = SCHOOL.specialRooms.find(r => r.code === code); if (sp) return sp.name;
-  const g = +code.slice(0,2), c = +code.slice(2);
-  if (SCHOOL.classesPerGrade[g] && c >= 1 && c <= SCHOOL.classesPerGrade[g]) return `${g}학년 ${c}반`;
-  return `교실 ${code}`;
-}
-function guideHTML(code){
-  return `<div class="g-room">${esc(roomName(code))}</div>
+const randCode = () => String(Math.floor(Math.random() * 10000)).padStart(4, '0');
+function guideHTML(code, label){
+  return `<div class="g-room">${esc(label)}</div>
     <div class="ticket"><span class="stub">입장<br>숫자</span><b class="digits-big">${esc(code)}</b></div>
     <div class="g-url">접속 주소<b>${esc(baseUrl())}</b></div>
-    <ol class="g-steps"><li>주소로 들어가 ‘학생이에요’ 누르기</li><li>숫자 4개와 번호, 이름 넣기</li><li>‘전체 화면’ 골라 공유하기</li></ol>`;
+    <ol class="g-steps"><li>크롬북으로 주소에 들어가기</li><li>숫자 4개와 번호, 이름 넣기</li><li>‘전체 화면’ 골라 공유하기</li></ol>`;
 }
+
+/* ---------- 선생님 비밀번호 ---------- */
+async function sha256(text){
+  if (window.crypto && crypto.subtle) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+    return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2,'0')).join('');
+  }
+  // https가 아닌 곳(파일로 열기 등)을 위한 예비 계산
+  const K=[0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2];
+  const bytes=[...new TextEncoder().encode(text)], l=bytes.length*8;
+  bytes.push(0x80); while(bytes.length%64!==56) bytes.push(0);
+  for(let i=7;i>=0;i--) bytes.push(i>3?0:(l>>>(i*8))&255);
+  let H=[0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19];
+  const r=(x,n)=>(x>>>n)|(x<<(32-n));
+  for(let o=0;o<bytes.length;o+=64){
+    const w=[]; for(let i=0;i<16;i++) w[i]=(bytes[o+i*4]<<24)|(bytes[o+i*4+1]<<16)|(bytes[o+i*4+2]<<8)|bytes[o+i*4+3];
+    for(let i=16;i<64;i++){const s0=r(w[i-15],7)^r(w[i-15],18)^(w[i-15]>>>3),s1=r(w[i-2],17)^r(w[i-2],19)^(w[i-2]>>>10);w[i]=(w[i-16]+s0+w[i-7]+s1)|0;}
+    let [a,b,c,d,e,f,g,h]=H;
+    for(let i=0;i<64;i++){const t1=(h+(r(e,6)^r(e,11)^r(e,25))+((e&f)^(~e&g))+K[i]+w[i])|0,t2=((r(a,2)^r(a,13)^r(a,22))+((a&b)^(a&c)^(b&c)))|0;h=g;g=f;f=e;e=(d+t1)|0;d=c;c=b;b=a;a=(t1+t2)|0;}
+    H=H.map((v,i)=>(v+[a,b,c,d,e,f,g,h][i])|0);
+  }
+  return H.map(v=>(v>>>0).toString(16).padStart(8,'0')).join('');
+}
+function teacherUnlocked(){ return store.get('sw-teacher', '') === SCHOOL.teacherPinHash; }
+$('#pinGo').onclick = async () => {
+  const pin = $('#pinIn').value.trim();
+  if (!pin) return setMsg('#pinMsg', '비밀번호를 넣어 주세요.', 'bad');
+  if (await sha256(PREFIX + pin) === SCHOOL.teacherPinHash) {
+    store.set('sw-teacher', SCHOOL.teacherPinHash);
+    $('#pinIn').value = ''; setMsg('#pinMsg', ''); go('teacherSetup');
+  } else { setMsg('#pinMsg', '비밀번호가 맞지 않아요.', 'bad'); $('#pinIn').select(); }
+};
+$('#pinIn').addEventListener('keydown', e => { if (e.key === 'Enter') $('#pinGo').click(); });
+$('#tLock').onclick = () => { store.set('sw-teacher', ''); go('teacherPin'); };
 
 /* =========================================================
    선생님
@@ -455,38 +535,64 @@ function showTab(id){
   if (id === 'sp') list = SCHOOL.specialRooms.map(r => ({ ...r, sp:true }));
   else {
     const n = SCHOOL.classesPerGrade[id] || 0;
-    list = Array.from({ length:n }, (_, i) => ({ plate:`${id}-${i+1}`, name:`${id}학년 ${i+1}반`, code: String(id).padStart(2,'0') + String(i+1).padStart(2,'0') }));
+    list = Array.from({ length:n }, (_, i) => ({ plate:`${id}-${i+1}`, name:`${id}학년 ${i+1}반` }));
   }
-  $('#rooms').innerHTML = list.map(r => `<button class="room ${r.sp?'special':''}" data-code="${r.code}" aria-label="${esc(r.name)}, 입장 숫자 ${r.code}"><span class="tag">${r.code}</span><span class="plate">${esc(r.plate || r.name)}</span><span class="sub">${r.sp ? '특별실' : esc(r.name)}</span></button>`).join('');
+  $('#rooms').innerHTML = list.map(r => `<button class="room ${r.sp?'special':''}" data-name="${esc(r.name)}" aria-label="${esc(r.name)}"><span class="plate">${esc(r.plate || r.name)}</span><span class="sub">${r.sp ? '특별실' : esc(r.name)}</span></button>`).join('');
 }
 $('#gradeTabs').addEventListener('click', e => { const b = e.target.closest('[data-tab]'); if (b) showTab(b.dataset.tab); });
-$('#rooms').addEventListener('click', e => { const b = e.target.closest('.room'); if (b) startTeacher(b.dataset.code); });
+// ---- 입장 숫자 정하기 창 ----
+// 선생님마다, 교실마다 숫자를 따로 정하고 이 컴퓨터에 저장해요. (교실 목록에는 숫자를 보여 주지 않아요)
+let pickRoom = null;
+function openDlg(name){
+  pickRoom = name;
+  const custom = !name;
+  $('#dlgRoom').textContent = custom ? '목록에 없는 곳' : name;
+  $('#dlgNameWrap').hidden = !custom; $('#dlgName').value = '';
+  $('#tCode').value = (!custom && store.get('sw-codes', {})[name]) || randCode();
+  setMsg('#tSetupMsg', '');
+  $('#codeDlg').hidden = false;
+  (custom ? $('#dlgName') : $('#tCode')).focus();
+}
+function closeDlg(){ if (!$('#tStart').disabled) $('#codeDlg').hidden = true; }
+$('#rooms').addEventListener('click', e => { const b = e.target.closest('.room'); if (b) openDlg(b.dataset.name); });
+$('#tOther').onclick = () => openDlg(null);
+$('#dlgNew').onclick = () => { $('#tCode').value = randCode(); setMsg('#tSetupMsg', ''); };
+$('#dlgCancel').onclick = closeDlg;
+$('#codeDlg').addEventListener('click', e => { if (e.target.id === 'codeDlg') closeDlg(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#codeDlg').hidden) closeDlg(); });
 $('#tCode').addEventListener('input', e => e.target.value = e.target.value.replace(/\D/g,'').slice(0,4));
+$('#tCode').addEventListener('focus', e => e.target.select());
 $('#tCode').addEventListener('keydown', e => { if (e.key === 'Enter') $('#tStart').click(); });
 $('#tStart').onclick = () => {
   const c = $('#tCode').value.trim();
   if (!/^\d{4}$/.test(c)) return setMsg('#tSetupMsg', '숫자 4개를 넣어 주세요.', 'bad');
-  startTeacher(c);
+  const label = pickRoom || $('#dlgName').value.trim() || '우리 교실';
+  startTeacher(c, label);
 };
 
-function lockSetup(on){ document.querySelectorAll('#rooms .room, #tStart').forEach(b => b.disabled = on); }
+function lockSetup(on){ document.querySelectorAll('#tStart, #dlgNew, #dlgCancel').forEach(b => b.disabled = on); }
 
-function startTeacher(code, isRetry=false){
+function startTeacher(code, label, isRetry=false){
   if (!window.Peer) return setMsg('#tSetupMsg', '연결 도구를 불러오지 못했어요. 인터넷 연결을 확인하고 새로고침해 주세요.', 'bad');
   if (!isRetry) T.tries = 0;
-  T.code = code;
+  T.code = code; T.label = label;
   lockSetup(true);
-  setMsg('#tSetupMsg', `${roomName(code)} 수업을 여는 중…`);
+  setMsg('#tSetupMsg', `${label} 수업을 여는 중…`);
   const peer = new Peer(PREFIX + code, { debug:1, ...PEER_OPTS });
   T.peer = peer;
 
-  peer.on('open', () => { lockSetup(false); setMsg('#tSetupMsg',''); openBoard(); });
+  peer.on('open', () => {
+    lockSetup(false); setMsg('#tSetupMsg','');
+    if (pickRoom) { const m = store.get('sw-codes', {}); m[pickRoom] = code; store.set('sw-codes', m); }
+    $('#codeDlg').hidden = true;
+    openBoard();
+  });
   peer.on('error', err => {
     if (err.type === 'unavailable-id') {
       peer.destroy();
       // 방금 새로고침했다면 서버가 예전 연결을 정리할 때까지 잠깐 기다렸다 다시 시도
-      if (T.tries++ < 4) { setMsg('#tSetupMsg', `잠시만요… 예전 연결을 정리하는 중 (${T.tries}/4)`); setTimeout(() => startTeacher(code, true), 4000); }
-      else { lockSetup(false); setMsg('#tSetupMsg', `‘${code}’는 지금 다른 컴퓨터에서 쓰고 있어요. 그 컴퓨터에서 수업을 끝내거나, 다른 숫자로 열어 주세요.`, 'bad'); }
+      if (T.tries++ < 2) { setMsg('#tSetupMsg', `잠시만요… 예전 연결을 정리하는 중 (${T.tries}/2)`); setTimeout(() => startTeacher(code, label, true), 4000); }
+      else { lockSetup(false); setMsg('#tSetupMsg', `‘${code}’는 지금 다른 교실에서 쓰고 있어요. ‘다른 숫자 만들기’를 눌러 바꿔 주세요.`, 'bad'); }
     } else if (['network','server-error','socket-error','socket-closed','browser-incompatible'].includes(err.type)) {
       if (!T.open) { lockSetup(false); setMsg('#tSetupMsg', '연결 서버에 닿지 않아요. 인터넷 연결을 확인해 주세요.', 'bad'); }
       else toast('연결 서버와 잠시 끊겼어요. 다시 잇는 중…');
@@ -495,7 +601,10 @@ function startTeacher(code, isRetry=false){
   peer.on('disconnected', () => { if (!peer.destroyed && T.open) setTimeout(() => { try { peer.reconnect(); } catch {} }, 1500); });
 
   peer.on('connection', conn => {
-    conn.on('open', () => { const r = rec(conn.peer); r.conn = conn; r.online = true; r.lastSeen = Date.now(); updateTile(r); refresh(); });
+    conn.on('open', () => {
+      const r = rec(conn.peer); r.conn = conn; r.online = true; r.lastSeen = Date.now(); updateTile(r); refresh();
+      try { conn.send({ type:'room', name:T.label }); } catch {}
+    });
     conn.on('data', d => onStudentData(conn.peer, d));
     conn.on('close', () => { const r = T.students.get(conn.peer); if (r && r.conn === conn) markOffline(r); });
     conn.on('error', () => {});
@@ -521,10 +630,10 @@ function startTeacher(code, isRetry=false){
 function openBoard(){
   T.open = true;
   $('#bCode').textContent = T.code;
-  $('#bClass').textContent = roomName(T.code);
-  $('#emptyGuide').innerHTML = guideHTML(T.code);
-  $('#guideBody').innerHTML = guideHTML(T.code);
-  document.title = `${roomName(T.code)} · 화면 모아보기`;
+  $('#bClass').textContent = T.label;
+  $('#emptyGuide').innerHTML = guideHTML(T.code, T.label);
+  $('#guideBody').innerHTML = guideHTML(T.code, T.label);
+  document.title = `${T.label} · 화면 모아보기`;
   go('teacherBoard');
   refresh();
 }
@@ -562,9 +671,9 @@ function onStudentData(id, d){
   if (!r.online) { r.online = true; updateTile(r); refresh(); }
   if (d.type === 'hello') {
     r.num = String(d.num ?? '').replace(/\D/g,'').slice(0,2);
-    r.name = String(d.name ?? '').slice(0,10) || '이름 없음';
-    r.key = r.num + '|' + r.name;
-    // 같은 학생이 다시 들어오면 예전 칸을 정리
+    r.name = '';
+    r.key = String(d.dev || ('num-' + r.num));
+    // 같은 크롬북이 다시 들어오면 예전 칸을 정리 (다른 크롬북이 같은 번호를 넣으면 둘 다 보이고 '번호 겹침' 표시)
     for (const o of [...T.students.values()]) {
       if (o !== r && o.key === r.key) { if (o.selected) r.selected = true; const wasSpot = T.spotId === o.id; removeRec(o); if (wasSpot) openSpot(r); }
     }
@@ -579,7 +688,8 @@ function updateTile(r){
   r.el.dataset.st = st;
   r.el.classList.toggle('sel', r.selected);
   r.el.querySelector('.num').textContent = r.num || '';
-  r.el.querySelector('.nm').textContent = r.name || '연결 중…';
+  r.el.querySelector('.nm').textContent = r.num ? (r.dupe ? '번호 겹침' : '') : '연결 중…';
+  r.el.classList.toggle('dupe', !!r.dupe);
   const badge = r.el.querySelector('.badge');
   badge.hidden = !(st === 'live' && r.surface && r.surface !== 'monitor');
   badge.textContent = r.surface === 'window' ? '창만' : '탭만';
@@ -600,6 +710,10 @@ function selectedList(){ return sorted().filter(r => r.selected); }
 
 function refresh(){
   const all = sorted();
+  // 같은 번호가 두 크롬북 이상에서 들어오면 표시
+  const cnt = {};
+  all.forEach(r => { if (r.online && r.num) cnt[r.num] = (cnt[r.num] || 0) + 1; });
+  all.forEach(r => { const d = !!(r.online && r.num && cnt[r.num] > 1); if (d !== !!r.dupe) { r.dupe = d; updateTile(r); } });
   const sel = all.filter(r => r.selected);
   if (T.view === 'selected' && sel.length === 0) setView('all', true);
   all.forEach((r, i) => { r.el.style.order = i; r.el.classList.toggle('hide', T.view === 'selected' && !r.selected); });
@@ -653,7 +767,6 @@ function setView(v, silent){
 }
 $('#viewSeg').addEventListener('click', e => { const b = e.target.closest('[data-view]'); if (b) setView(b.dataset.view); });
 $('#bClearSel').onclick = () => { T.students.forEach(r => { r.selected = false; updateTile(r); }); setView('all', true); refresh(); };
-$('#bHideNames').onclick = e => { e.currentTarget.classList.toggle('on'); $('#teacherBoard').classList.toggle('names-hidden'); $('#spot').classList.toggle('names-hidden'); };
 $('#bBlur').onclick = e => { const on = e.currentTarget.classList.toggle('on'); document.body.classList.toggle('blurred', on); };
 $('#bGuide').onclick = () => $('#guideOv').hidden = false;
 $('#guideClose').onclick = () => $('#guideOv').hidden = true;
@@ -674,7 +787,7 @@ $('#bEnd').onclick = () => {
 function openSpot(r){
   T.spotId = r.id;
   $('#spotVideo').srcObject = r.stream || null;
-  $('#spotName').innerHTML = `<span class="num">${esc(r.num ? r.num + '번' : '')}</span><span class="nm">${esc(r.name)}</span>`;
+  $('#spotName').innerHTML = `<span class="num">${esc(r.num ? r.num + '번' : '')}</span>`;
   $('#spot').hidden = false;
   updateSpotFrz(r);
   applyQuality();
@@ -763,16 +876,24 @@ D.forEach((inp, i) => {
   });
 });
 $('#sNum').addEventListener('input', e => e.target.value = e.target.value.replace(/\D/g,'').slice(0,2));
-$('#sName').addEventListener('keydown', e => { if (e.key === 'Enter') $('#sJoin').click(); });
+$('#sNum').addEventListener('keydown', e => { if (e.key === 'Enter') $('#sJoin').click(); });
+// 크롬북마다 한 번 만들어 저장하는 보이지 않는 표시 (같은 크롬북이 다시 들어올 때 알아보는 용도, 개인정보 아님)
+function deviceId(){ let id = store.get('sw-device', ''); if (!id) { id = Math.random().toString(36).slice(2, 10) + Date.now().toString(36); store.set('sw-device', id); } return id; }
 
+function showIdentity(){
+  const saved = store.get('sw-student', null);
+  const has = saved && saved.num;
+  $('#sMe').hidden = !has; $('#sIdent').hidden = !!has;
+  if (has) { $('#sNum').value = saved.num; $('#sMeText').textContent = `${saved.num}번`; }
+}
+$('#sMeEdit').onclick = () => { $('#sMe').hidden = true; $('#sIdent').hidden = false; $('#sNum').focus(); };
 $('#sJoin').onclick = () => {
   const code = D.map(d => d.value).join('');
-  const num = $('#sNum').value.trim(), name = $('#sName').value.trim();
+  const num = String(+$('#sNum').value.trim() || ''), name = '';
   if (!/^\d{4}$/.test(code)) return setMsg('#sJoinMsg', '숫자 4개를 모두 넣어 주세요.', 'bad');
   if (!num) return setMsg('#sJoinMsg', '번호를 넣어 주세요.', 'bad');
-  if (!name) return setMsg('#sJoinMsg', '이름을 넣어 주세요.', 'bad');
   if (!window.Peer) return setMsg('#sJoinMsg', '연결 도구를 불러오지 못했어요. 새로고침해 주세요.', 'bad');
-  store.set('sw-student', { num, name });
+  store.set('sw-student', { num }); showIdentity();
   Object.assign(S, { code, num, name, leaving:false, everJoined:false });
   $('#sJoin').disabled = true;
   setMsg('#sJoinMsg', '선생님 수업을 찾는 중…');
@@ -795,11 +916,11 @@ function connectStudent(){
     S.pending = true;
     const conn = S.peer.connect(PREFIX + S.code, { reliable:true });
     S.conn = conn;
-    const to = setTimeout(() => { if (S.pending && S.conn === conn && !conn.open) { try { conn.close(); } catch {} fail('nofound'); } }, 9000);
+    const to = setTimeout(() => { if (S.pending && S.conn === conn && !conn.open) { try { conn.close(); } catch {} fail('blocked'); } }, 10000);
     conn.on('open', () => {
       clearTimeout(to); S.pending = false;
       const surface = S.stream ? (S.stream.getVideoTracks()[0]?.getSettings().displaySurface || '') : '';
-      conn.send({ type:'hello', num:S.num, name:S.name, surface });
+      conn.send({ type:'hello', num:S.num, dev:deviceId(), surface });
       const first = !S.everJoined; S.everJoined = true;
       if (first) { setMsg('#sJoinMsg', ''); $('#sJoin').disabled = false; go('studentLive'); }
       if (S.stream) startCall();
@@ -816,7 +937,10 @@ function fail(kind){
   S.pending = false;
   if (!S.everJoined) {
     $('#sJoin').disabled = false;
-    setMsg('#sJoinMsg', kind === 'network' ? '인터넷 연결을 확인해 주세요.' : '수업을 찾지 못했어요. 숫자 4개가 맞는지, 선생님이 수업을 열었는지 확인해 주세요.', 'bad');
+    setMsg('#sJoinMsg',
+      kind === 'network' ? '인터넷 연결을 확인해 주세요.'
+      : kind === 'blocked' ? '수업은 찾았지만 선생님 컴퓨터와 연결이 막혔어요. 학교 와이파이에 연결돼 있는지 확인해 주세요.'
+      : '수업을 찾지 못했어요. 숫자 4개가 맞는지, 선생님이 수업을 열었는지 확인해 주세요.', 'bad');
     try { S.peer.destroy(); } catch {} S.peer = null;
   } else {
     setLive('reconnect');
@@ -832,9 +956,16 @@ function onTeacherData(d){
   if (!d || typeof d !== 'object') return;
   if (d.type === 'quality') { S.level = d.level === 'high' ? 'high' : 'low'; applyLevel(); }
   if (d.type === 'end') endByTeacher();
+  if (d.type === 'room') { S.room = String(d.name || '').slice(0, 20); $('#sWho').innerHTML = whoHTML(); }
 }
 
+const isPhone = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) && !/CrOS/.test(navigator.userAgent);
+const canShare = !!(navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) && !isPhone;
 $('#sShare').onclick = async () => {
+  if (!canShare) {
+    $('#sSurfaceWarn').innerHTML = '이 기기(휴대폰·태블릿)에서는 화면 공유가 안 돼요. <b>크롬북</b>으로 들어와 주세요.';
+    $('#sSurfaceWarn').hidden = false; return;
+  }
   let st;
   try {
     st = await navigator.mediaDevices.getDisplayMedia({
@@ -842,7 +973,11 @@ $('#sShare').onclick = async () => {
       audio: false, selfBrowserSurface:'exclude', surfaceSwitching:'exclude', monitorTypeSurfaces:'include'
     });
   } catch (e) {
-    toast(e && e.name === 'NotAllowedError' ? '공유가 취소됐어요. 다시 눌러 주세요.' : '화면 공유를 시작할 수 없어요. 선생님께 알려 주세요.');
+    if (e && e.name === 'NotAllowedError') { toast('공유가 취소됐어요. 다시 눌러 주세요.'); return; }
+    $('#sSurfaceWarn').innerHTML = (e && (e.name === 'NotSupportedError' || e.name === 'TypeError'))
+      ? '이 기기에서는 화면 공유가 안 돼요. <b>크롬북</b>으로 들어와 주세요.'
+      : '화면 공유를 시작할 수 없어요. 학교 크롬북 설정에서 화면 공유가 막혀 있을 수 있으니 선생님께 알려 주세요.';
+    $('#sSurfaceWarn').hidden = false;
     return;
   }
   const tr = st.getVideoTracks()[0];
@@ -869,7 +1004,7 @@ function showSurfaceWarn(refused){
 function startCall(){
   if (!S.stream || !S.peer) return;
   try { S.call && S.call.close(); } catch {}
-  const call = S.peer.call(PREFIX + S.code, S.stream, { metadata:{ num:S.num, name:S.name } });
+  const call = S.peer.call(PREFIX + S.code, S.stream, { metadata:{ num:S.num } });
   S.call = call; S.level = 'low';
   const pc = call && call.peerConnection;
   if (pc) pc.addEventListener('connectionstatechange', () => { if (pc.connectionState === 'connected') applyLevel(); });
@@ -913,10 +1048,11 @@ function endByTeacher(){
   go('studentLive');
   setLive('ended');
 }
+function whoHTML(){ return `${S.room ? esc(S.room) + ' ' : ''}<b>${esc(S.num)}번</b>`; }
 function setLive(state){
   const card = $('#liveCard');
   card.className = 'card live st-' + state;
-  $('#sWho').innerHTML = `${esc(roomName(S.code))} <b>${esc(S.num)}번 ${esc(S.name)}</b>`;
+  $('#sWho').innerHTML = whoHTML();
   const show = (sel, on) => $(sel).hidden = !on;
   if (state === 'ready') {
     $('#sIcon').textContent = '🙂'; $('#sTitle').textContent = '들어왔어요!';
@@ -945,12 +1081,13 @@ window.addEventListener('beforeunload', e => { if (T.open || S.stream) { e.preve
 /* ---------- 시작 ---------- */
 (function init(){
   buildRooms();
-  const saved = store.get('sw-student', null);
-  if (saved) { $('#sNum').value = saved.num || ''; $('#sName').value = saved.name || ''; }
+  showIdentity();
   const q = new URLSearchParams(location.search);
   const code = (q.get('code') || '').replace(/\D/g,'').slice(0,4);
-  if (code.length === 4) { code.split('').forEach((c, i) => D[i].value = c); go('studentJoin'); }
-  else if (q.has('teacher')) go('teacherSetup');
+  if (code.length === 4) code.split('').forEach((c, i) => D[i].value = c);
+  // 선생님은 주소 끝에 ?oceant 를 붙여 들어와요. 학생 화면에는 선생님 버튼이 없어요.
+  if (q.has('oceant')) go(teacherUnlocked() ? 'teacherSetup' : 'teacherPin');
+  else go('studentJoin');
 })();
 </script>
 </body>
