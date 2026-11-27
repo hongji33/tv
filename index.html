@@ -211,6 +211,7 @@ label{display:block;font-weight:800;font-size:15px}
 .lbl .nm:empty{display:none}
 .lbl .num{min-width:2.2em;justify-content:center}
 .tile.dupe .lbl .nm{background:var(--coral)}
+.num-in{display:block;max-width:140px;font-size:22px;text-align:center}
 .lbl{cursor:pointer}
 .lbl:hover .num{background:var(--pass)}
 .tile.nonum .lbl .num{background:var(--pass)}
@@ -407,7 +408,10 @@ label{display:block;font-weight:800;font-size:15px}
       <input inputmode="numeric" maxlength="1" placeholder=" " aria-label="첫째 숫자"><input inputmode="numeric" maxlength="1" placeholder=" " aria-label="둘째 숫자"><input inputmode="numeric" maxlength="1" placeholder=" " aria-label="셋째 숫자"><input inputmode="numeric" maxlength="1" placeholder=" " aria-label="넷째 숫자">
     </div>
     <div class="me" id="sMe" hidden><span class="me-k">이 크롬북</span><b id="sMeText"></b></div>
-    <p class="ident-help" id="sIdent">번호는 선생님이 정해 줘요. 숫자 4개만 넣고 들어가요.</p>
+    <div id="sIdent">
+      <label id="sNumWrap">내 번호 <span style="font-weight:600;color:var(--mist)">(처음 한 번만, 몰라도 괜찮아요)</span><input id="sNum" class="field num-in" inputmode="numeric" maxlength="2" placeholder="12" autocomplete="off"></label>
+      <p class="ident-help" id="sIdentHelp">한 번 넣으면 이 크롬북에 저장되고, 그다음부터는 선생님만 바꿀 수 있어요. 비워 두면 선생님이 정해 줘요.</p>
+    </div>
     <button id="sJoin" class="btn btn-pass wide">들어가기</button>
     <p id="sJoinMsg" class="msg"></p>
   </div>
@@ -444,6 +448,8 @@ const SCHOOL = {
   // 크롬북 시계는 1분마다 바뀌어서, 60초보다 짧으면 가만히 글 읽는 학생도 표시될 수 있어요
   // (멈춘 사진만 확실히 잡으려면 70으로 바꾸세요)
   freezeSeconds: 30,
+  // 학생이 처음 한 번 자기 번호를 넣을 수 있게 할지 (false면 선생님만 번호를 정해요)
+  studentCanSetNumber: true,
   // 선생님 비밀번호 (직접 적지 않고 암호처럼 바꾼 값만 넣어요. 바꾸고 싶으면 Claude에게 새 비밀번호를 알려 주세요)
   teacherPinHash: 'f5f9b934746d647fbdc2dc65e8a5f3897bf9bae0d16332539431b63451d0025f',
   // 학교 와이파이에서 학생과 선생님 기기가 직접 연결되지 않을 때 쓰는 중계(TURN) 서버. 필요할 때만 넣어요.
@@ -909,7 +915,7 @@ setInterval(() => {
 const S = { peer:null, conn:null, call:null, stream:null, code:'', num:'', name:'', level:'low', everJoined:false, pending:false, leaving:false, retryT:null };
 const D = [...document.querySelectorAll('#digits input')];
 D.forEach((inp, i) => {
-  inp.addEventListener('input', () => { inp.value = inp.value.replace(/\D/g,'').slice(-1); if (inp.value && i < 3) D[i+1].focus(); else if (inp.value && i === 3) $('#sJoin').focus(); });
+  inp.addEventListener('input', () => { inp.value = inp.value.replace(/\D/g,'').slice(-1); if (inp.value && i < 3) D[i+1].focus(); else if (inp.value && i === 3) (!$('#sIdent').hidden && !$('#sNumWrap').hidden ? $('#sNum') : $('#sJoin')).focus(); });
   inp.addEventListener('keydown', e => { if (e.key === 'Backspace' && !inp.value && i > 0) D[i-1].focus(); if (e.key === 'Enter') $('#sJoin').click(); });
   inp.addEventListener('paste', e => {
     const t = (e.clipboardData.getData('text') || '').replace(/\D/g,'').slice(0,4);
@@ -924,11 +930,20 @@ function showIdentity(){
   const has = saved && saved.num;
   $('#sMe').hidden = !has; $('#sIdent').hidden = !!has;
   if (has) $('#sMeText').textContent = `${saved.num}번`;
+  if (!SCHOOL.studentCanSetNumber) { $('#sNumWrap').hidden = true; $('#sIdentHelp').textContent = '번호는 선생님이 정해 줘요. 숫자 4개만 넣고 들어가요.'; }
 }
+$('#sNum').addEventListener('input', e => e.target.value = e.target.value.replace(/\D/g,'').slice(0,2));
+$('#sNum').addEventListener('keydown', e => { if (e.key === 'Enter') $('#sJoin').click(); });
 $('#sJoin').onclick = () => {
   const code = D.map(d => d.value).join('');
   const saved = store.get('sw-student', null);
-  const num = (saved && saved.num) ? String(saved.num) : '', name = '';
+  let num = (saved && saved.num) ? String(saved.num) : '';
+  const name = '';
+  // 저장된 번호가 없을 때만 학생이 넣은 번호를 받아요 (한 번 정해지면 학생은 바꿀 수 없어요)
+  if (!num && SCHOOL.studentCanSetNumber) {
+    const typed = String(+$('#sNum').value.trim() || '');
+    if (typed && +typed > 0) { num = typed; store.set('sw-student', { num }); showIdentity(); }
+  }
   if (!/^\d{4}$/.test(code)) return setMsg('#sJoinMsg', '숫자 4개를 모두 넣어 주세요.', 'bad');
   if (!window.Peer) return setMsg('#sJoinMsg', '연결 도구를 불러오지 못했어요. 새로고침해 주세요.', 'bad');
   Object.assign(S, { code, num, name, leaving:false, everJoined:false });
